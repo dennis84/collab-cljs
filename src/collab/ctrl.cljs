@@ -1,4 +1,4 @@
 (ns collab.ctrl)
 
-(defn join [state]
-  (update-in state [:members] concat ["baz"]))
+(defn join [state id]
+  (update-in state [:members] concat [id]))
