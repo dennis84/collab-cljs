@@ -1,7 +1,10 @@
 (ns collab
   (:require [cljs.core.async :as a]
+            [clojure.string :as s]
+            [collab.util :as util]
             [collab.data :as data]
             [collab.ctrl :as ctrl]
+            [collab.conn :as conn]
             [collab.render :as render])
   (:require-macros [cljs.core.async.macros :as am]))
 
@@ -9,8 +12,10 @@
   {:dom-element elem
    :state (atom (data/make))
    :render-pending? (atom false)
-   :channels {:join (a/chan)}
-   :consumers {:join ctrl/join}})
+   :channels {:join (a/chan)
+              :leave (a/chan)}
+   :consumers {:join ctrl/join
+               :leave ctrl/leave}})
 
 (defn init-updates [app]
   (doseq [[ch update-fn] (:consumers app)]
@@ -19,9 +24,17 @@
             new-state (swap! (:state app) update-fn val)]
               (render/request-render app))))))
 
+(defn render-homepage [app]
+  (render/homepage app))
+
+(defn render-editor [app room]
+  (init-updates app)
+  (conn/init-websocket-receiver app)
+  (render/request-render app))
+
 (defn ^:export main [elem]
-  (let [app (load-app elem)]
-    (init-updates app)
-    (am/go (a/>! (:join (:channels app)) "foo"))
-    (am/go (a/>! (:join (:channels app)) "bar"))
-    (render/request-render app)))
+  (let [app (load-app elem)
+        room (subs (.-hash js/location) 1)]
+    (if (s/blank? room)
+      (render-homepage app)
+      (render-editor app room))))

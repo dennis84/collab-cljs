@@ -13,7 +13,7 @@
     (map #(d/div {} %) (:members state))))
 
 (defn request-render [app]
-  (let [room (subs (.-hash js/location) 1)]
-    (if (s/blank? room)
-      (q/render (Home) (:dom-element app))
-      (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))))
+  (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))
+
+(defn homepage [app]
+  (q/render (Home) (:dom-element app)))
