@@ -13,9 +13,11 @@
    :state (atom (data/make))
    :render-pending? (atom false)
    :channels {:join (a/chan)
-              :leave (a/chan)}
+              :leave (a/chan)
+              :members (a/chan)}
    :consumers {:join ctrl/join
-               :leave ctrl/leave}})
+               :leave ctrl/leave
+               :members ctrl/members}})
 
 (defn init-updates [app]
   (doseq [[ch update-fn] (:consumers app)]

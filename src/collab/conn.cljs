@@ -6,8 +6,9 @@
 (defn on-message [channels msg]
   (let [data (util/json->clj (.-data msg))]
     (case (:t data)
-      "join"  (go (>! (:join channels) (:d data)))
-      "leave" (go (>! (:leave channels) (:d data)))
+      "join"    (go (>! (:join channels) (:d data)))
+      "leave"   (go (>! (:leave channels) (:d data)))
+      "members" (go (>! (:members channels) (:d data)))
       "default")))
 
 (defn on-open [ws]

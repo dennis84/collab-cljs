@@ -10,7 +10,7 @@
 
 (q/defcomponent Editor [state channels]
   (apply d/div {}
-    (map #(d/div {} %) (:members state))))
+    (map #(d/div {} %) (map #(:id %) (:members state)))))
 
 (defn request-render [app]
   (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))
