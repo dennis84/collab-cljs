@@ -8,9 +8,18 @@
 (q/defcomponent Home []
   (d/div {} "Home"))
 
+(q/defcomponent Navigation [state channels]
+  (apply d/ul {}
+    (map #(d/li {} %) (map #(:name %) (:members state)))))
+
+(q/defcomponent Panes [state channels]
+  (apply d/ul {}
+    (map #(d/li {} %) (map #(:id %) (:files state)))))
+
 (q/defcomponent Editor [state channels]
-  (apply d/div {}
-    (map #(d/div {} %) (map #(:name %) (:members state)))))
+  (d/div {}
+    (Navigation state channels)
+    (Panes state channels)))
 
 (defn request-render [app]
   (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))

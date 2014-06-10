@@ -10,6 +10,7 @@
       "leave"         (go (>! (:leave channels) (:d data)))
       "members"       (go (>! (:members channels) (:d data)))
       "update-member" (go (>! (:update-member channels) (:d data)))
+      "code"          (go (>! (:code channels) (:d data)))
       "default")))
 
 (defn on-open [ws]

@@ -1,4 +1,5 @@
 (ns collab.data)
 
 (defn make []
-  {:members nil})
+  {:members nil
+   :files nil})
