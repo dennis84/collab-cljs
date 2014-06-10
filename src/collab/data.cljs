@@ -2,4 +2,5 @@
 
 (defn make []
   {:members nil
-   :files nil})
+   :files nil
+   :cursors nil})

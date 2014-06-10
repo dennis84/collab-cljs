@@ -16,10 +16,15 @@
   (apply d/ul {}
     (map #(d/li {} %) (map #(:id %) (:files state)))))
 
+(q/defcomponent Cursors [state channels]
+  (apply d/ul {}
+    (map #(d/li {} %) (map #(:id %) (:cursors state)))))
+
 (q/defcomponent Editor [state channels]
   (d/div {}
     (Navigation state channels)
-    (Panes state channels)))
+    (Panes state channels)
+    (Cursors state channels)))
 
 (defn request-render [app]
   (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))

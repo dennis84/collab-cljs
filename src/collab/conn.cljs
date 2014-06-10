@@ -11,6 +11,7 @@
       "members"       (go (>! (:members channels) (:d data)))
       "update-member" (go (>! (:update-member channels) (:d data)))
       "code"          (go (>! (:code channels) (:d data)))
+      "cursor"        (go (>! (:cursor channels) [(:s data) (:d data)]))
       "default")))
 
 (defn on-open [ws]

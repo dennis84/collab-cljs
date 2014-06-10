@@ -16,12 +16,14 @@
               :leave (a/chan)
               :members (a/chan)
               :update-member (a/chan)
-              :code (a/chan)}
+              :code (a/chan)
+              :cursor (a/chan)}
    :consumers {:join ctrl/join
                :leave ctrl/leave
                :members ctrl/members
                :update-member ctrl/update-member
-               :code ctrl/code}})
+               :code ctrl/code
+               :cursor ctrl/cursor}})
 
 (defn init-updates [app]
   (doseq [[ch update-fn] (:consumers app)]

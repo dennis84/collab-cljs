@@ -40,3 +40,17 @@
         f)) fs)
       (concat fs [(make-file data)])
     ))))
+
+;;;; Cursor
+
+(defn make-cursor [id c]
+  {:id id :x (:x c) :y (:y c) :file (:file c)})
+
+(defn cursor [state [sender data]] 
+  (update-in state [:cursors] (fn [cs]
+    (if (some #(= (:id %) sender) cs)
+      (map (fn [c] (if (= (:id c) sender)
+        (assoc c :x (:x data) :y (:y data) :file (:file data))
+        c)) cs)
+      (concat cs [(make-cursor sender data)])
+    ))))
