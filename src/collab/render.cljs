@@ -12,19 +12,27 @@
   (apply d/ul {}
     (map #(d/li {} %) (map #(:name %) (:members state)))))
 
-(q/defcomponent Panes [state channels]
-  (apply d/ul {}
-    (map #(d/li {} %) (map #(:id %) (:files state)))))
+(q/defcomponent Cursor [cursor]
+  (d/b {} (:file cursor)))
 
-(q/defcomponent Cursors [state channels]
-  (apply d/ul {}
-    (map #(d/li {} %) (map #(:id %) (:cursors state)))))
+(q/defcomponent Pane [data]
+  (apply d/div {} 
+    (d/pre {} (:id (:file data)))
+    (map #(Cursor %) (:cursors data))))
+
+(defn- filter-cursors-by-file [cs f]
+  (filter #(= (:file %) (:id f)) cs))
+
+(q/defcomponent Panes [state channels]
+  (let [cs (:cursors state)
+        fs (:files state)]
+    (apply d/div {}
+      (map #(Pane {:file % :cursors (filter-cursors-by-file cs %)}) fs))))
 
 (q/defcomponent Editor [state channels]
   (d/div {}
     (Navigation state channels)
-    (Panes state channels)
-    (Cursors state channels)))
+    (Panes state channels)))
 
 (defn request-render [app]
   (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))
