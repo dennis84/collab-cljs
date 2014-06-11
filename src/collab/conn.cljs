@@ -4,15 +4,15 @@
   (:require-macros [cljs.core.async.macros :refer (go)]))
 
 (defn on-message [channels msg]
-  (let [data (util/json->clj (.-data msg))]
-    (case (:t data)
-      "join"          (go (>! (:join channels) (:d data)))
-      "leave"         (go (>! (:leave channels) (:d data)))
-      "members"       (go (>! (:members channels) (:d data)))
-      "update-member" (go (>! (:update-member channels) (:d data)))
-      "code"          (go (>! (:code channels) (:d data)))
-      "cursor"        (go (>! (:cursor channels) [(:s data) (:d data)]))
-      "default")))
+  (let [data (util/json->clj (.-data msg))
+        channel (case (:t data)
+          "join"          (:join channels)
+          "leave"         (:leave channels)
+          "members"       (:members channels)
+          "update-member" (:update-member channels)
+          "code"          (:code channels)
+          "cursor"        (:cursor channels))]
+    (go (>! channel [(:d data) (:s data)]))))
 
 (defn on-open [ws]
   (.send ws (util/clj->json {:t "members"})))

@@ -13,7 +13,7 @@
     (map #(d/li {} %) (map #(:name %) (:members state)))))
 
 (q/defcomponent Cursor [cursor]
-  (d/b {} (:file cursor)))
+  (d/b {} (:member cursor)))
 
 (q/defcomponent Pane [data]
   (apply d/div {} 
