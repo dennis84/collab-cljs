@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "gulp": "~3.8.0",
+    "gulp-util": "~2.2.16",
+    "gulp-less": "~1.2.3",
+    "gulp-shell": "~0.2.5",
+    "gulp-concat": "~2.2.0"
+  }
+}

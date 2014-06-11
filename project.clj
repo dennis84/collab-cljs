@@ -1,4 +1,4 @@
-(defproject chessground "0.1.0"
+(defproject collab "0.1.0"
   :plugins [[lein-cljsbuild "1.0.3"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2227"]
@@ -9,7 +9,7 @@
     :builds [{
       :source-paths ["src"]
       :compiler {
-        :output-to "dist/index.js"
+        :output-to "assets/javascripts/index.js"
         :optimizations :advanced
         :preamble ["react/react.min.js"]
         :externs ["react/externs/react.js"]}}]})
