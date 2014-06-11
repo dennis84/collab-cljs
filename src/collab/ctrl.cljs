@@ -16,7 +16,7 @@
 
 (defn leave [state [id sender]]
   (update-in state [:members]
-    (fn [ms] (remove #(= id %) ms))))
+    (fn [ms] (remove #(= (:id %) id) ms))))
 
 (defn members [state [data sender]]
   (update-in state [:members]
