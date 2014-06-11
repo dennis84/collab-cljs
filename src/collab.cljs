@@ -37,7 +37,7 @@
 
 (defn render-editor [app room]
   (init-updates app)
-  (conn/init-websocket-receiver app)
+  (conn/init-websocket-receiver app room)
   (render/request-render app))
 
 (defn ^:export main [elem]
