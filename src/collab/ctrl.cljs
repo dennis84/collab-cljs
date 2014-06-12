@@ -23,9 +23,7 @@
   (assoc-in state [:members (:id data) :name] (:name data)))
 
 (defn- change-nick-in-cursor [state data]
-  (update-in state [:cursors]
-    (fn [cs] (map (fn [c] (if (= (:id c) (:id data))
-      (assoc c :member (:name data)) c)) cs))))
+  (assoc-in state [:cursors (:id data) :member] (:name data)))
 
 (defn update-member [state [data sender]]
   (-> state
@@ -35,29 +33,36 @@
 ;;;; Code
 
 (defn make-file [f]
-  {:id (:file f) :buffer (:buffer f) :lang (:lang f)})
+  {(:file f) {:id (:file f) :buffer (:buffer f) :lang (:lang f)}})
 
 (defn code [state [data sender]]
   (update-in state [:files] (fn [fs]
-    (if (some #(= (:id %) (:file data)) fs)
-      (map (fn [f] (if (= (:id f) (:file data))
-        (assoc f :buffer (:buffer data))
-        f)) fs)
-      (concat fs [(make-file data)])
-    ))))
+    (merge fs (make-file data)))))
 
 ;;;; Cursor
 
 (defn make-cursor [id c member]
-  {:id id :x (:x c) :y (:y c) :file (:file c) :member member})
+  {id {:x (:x c) :y (:y c) :file (:file c) :member (:name member)}})
 
 (defn cursor [state [data sender]]
   (update-in state [:cursors] (fn [cs]
-    (if (some #(= (:id %) sender) cs)
-      (map (fn [c] (if (= (:id c) sender)
-        (assoc c :x (:x data) :y (:y data) :file (:file data))
-        c)) cs)
-      (if-let [m (first (filter #(= (:id %) sender) (:members state)))]
-        (concat cs [(make-cursor sender data (:name m))])
-        (concat cs [(make-cursor sender data sender)]))
-    ))))
+    (let [members (:members state)
+          member (get members sender)]
+      (merge cs (make-cursor sender data member))))))
+
+(defn join [state [id sender]]
+  (update-in state [:members]
+    (fn [ms] (merge ms (make-member id)))))
+
+(defn members [state [data sender]]
+  (update-in state [:members]
+    (fn [ms] (merge ms (into {}
+      (map (fn [d] {(:id d) d}) data))))))
+
+;;;; Status
+
+(defn open [state]
+  (assoc-in state [:status] "opened"))
+
+(defn close [state]
+  (assoc-in state [:status] "closed"))

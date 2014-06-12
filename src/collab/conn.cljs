@@ -15,10 +15,15 @@
           "cursor"        (:cursor channels))]
     (go (>! channel [(:d data) (:s data)]))))
 
-(defn on-open [ws]
-  (.send ws (util/clj->json {:t "members"})))
+(defn on-open [channels ws]
+  (do (.send ws (util/clj->json {:t "members"}))
+      (go (>! (:open channels) []))))
+
+(defn on-close [channels]
+  (go (>! (:close channels) [])))
 
 (defn init-websocket-receiver [app room]
   (let [ws (new js/WebSocket (s/join ["ws://localhost:9000/" room]))]
-    (set! (.-onopen ws) (fn [] (on-open ws)))
+    (set! (.-onopen ws) (fn [] (on-open (:channels app) ws)))
+    (set! (.-onclose ws) (fn [] (on-close (:channels app))))
     (set! (.-onmessage ws) (fn [m] (on-message (:channels app) m)))))

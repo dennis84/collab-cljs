@@ -1,7 +1,6 @@
 (ns collab
   (:require [cljs.core.async :as a]
             [clojure.string :as s]
-            [collab.util :as util]
             [collab.data :as data]
             [collab.ctrl :as ctrl]
             [collab.conn :as conn]
@@ -17,13 +16,17 @@
               :members (a/chan)
               :update-member (a/chan)
               :code (a/chan)
-              :cursor (a/chan)}
+              :cursor (a/chan)
+              :close (a/chan)
+              :open (a/chan)}
    :consumers {:join ctrl/join
                :leave ctrl/leave
                :members ctrl/members
                :update-member ctrl/update-member
                :code ctrl/code
-               :cursor ctrl/cursor}})
+               :cursor ctrl/cursor
+               :close ctrl/close
+               :open ctrl/open }})
 
 (defn init-updates [app]
   (doseq [[ch update-fn] (:consumers app)]
