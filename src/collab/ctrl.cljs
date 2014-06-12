@@ -3,29 +3,24 @@
 
 ;;;; Member
 
-(defn- make-member [m]
-  (merge {:id nil :name "" :me false :coding false} m))
-
-(defn- add-members [xs ys]
-  (concat xs (map make-member (filter 
-    (fn [y] (not-any? #(= (:id y) (:id %)) xs)) ys))))
+(defn- make-member [id]
+  {id {:name id :me false :coding false}})
 
 (defn join [state [id sender]]
   (update-in state [:members]
-    (fn [ms] (add-members ms [{:id id :name id}]))))
+    (fn [ms] (merge ms (make-member id)))))
 
 (defn leave [state [id sender]]
   (update-in state [:members]
-    (fn [ms] (remove #(= (:id %) id) ms))))
+    (fn [ms] (dissoc ms id))))
 
 (defn members [state [data sender]]
   (update-in state [:members]
-    (fn [ms] (add-members ms data))))
+    (fn [ms] (merge ms (into {}
+      (map (fn [d] {(:id d) d}) data))))))
 
 (defn- change-nick [state data]
-  (update-in state [:members]
-    (fn [ms] (map (fn [m] (if (= (:id m) (:id data))
-      (assoc m :name (:name data)) m)) ms))))
+  (assoc-in state [:members (:id data) :name] (:name data)))
 
 (defn- change-nick-in-cursor [state data]
   (update-in state [:cursors]
