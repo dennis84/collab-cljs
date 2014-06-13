@@ -4,7 +4,8 @@
             [collab.data :as data]
             [collab.ctrl :as ctrl]
             [collab.conn :as conn]
-            [collab.render :as render])
+            [collab.home :as home]
+            [collab.editor :as editor])
   (:require-macros [cljs.core.async.macros :as am]))
 
 (defn load-app [elem]
@@ -33,15 +34,15 @@
     (am/go (while true
       (let [val (a/<! (get (:channels app) ch))
             new-state (swap! (:state app) update-fn val)]
-              (render/request-render app))))))
+              (editor/request-render app))))))
 
 (defn render-homepage [app]
-  (render/homepage app))
+  (home/request-render app))
 
 (defn render-editor [app room]
   (init-updates app)
   (conn/init-websocket-receiver app room)
-  (render/request-render app))
+  (editor/request-render app))
 
 (defn ^:export main [elem]
   (let [app (load-app elem)

@@ -42,22 +42,17 @@
 ;;;; Cursor
 
 (defn make-cursor [id c member]
-  {id {:x (:x c) :y (:y c) :file (:file c) :member (:name member)}})
+  {id {:x (:x c)
+       :y (:y c)
+       :file (:file c)
+       :member (:name member)
+       :follow true}})
 
 (defn cursor [state [data sender]]
   (update-in state [:cursors] (fn [cs]
     (let [members (:members state)
           member (get members sender)]
       (merge cs (make-cursor sender data member))))))
-
-(defn join [state [id sender]]
-  (update-in state [:members]
-    (fn [ms] (merge ms (make-member id)))))
-
-(defn members [state [data sender]]
-  (update-in state [:members]
-    (fn [ms] (merge ms (into {}
-      (map (fn [d] {(:id d) d}) data))))))
 
 ;;;; Status
 

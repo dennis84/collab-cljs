@@ -1,4 +1,4 @@
-(ns collab.render
+(ns collab.editor
   (:require [cljs.core.async :as a]
             [clojure.string :as s]
             [quiescent :as q :include-macros true]
@@ -6,9 +6,6 @@
             [collab.highlight :as hl]
             [collab.util :as util])
   (:require-macros [cljs.core.async.macros :as am]))
-
-(q/defcomponent Home []
-  (d/div {} "Home"))
 
 (q/defcomponent Member [member]
   (d/li {:className "list-group-item"} (:name member)
@@ -50,12 +47,18 @@
             :style {:top (get-cursor-top c) :left (get-cursor-left c)}
             } (:member c))))
 
+(defn is-cursor-in-file [cs f]
+  (-> (filter #(= (:file %) (:id f)) cs)
+      (count)
+      (> 0)))
+
 (q/defcomponent Pane [[file cursors]]
-  (d/div {:className "pane"} 
-    (d/pre {:className "content"} (hl/hightlight file))
-    (d/div {:className "filename"} (:id file))
-    (apply d/div {:className "cursors"}
-      (map #(Cursor %) cursors))))
+  (let [hidden? (is-cursor-in-file cursors file)]
+    (d/div {:className "pane" :style {:display (if hidden? "block" "none")}}
+      (d/pre {:className "content"} (hl/hightlight file))
+      (d/div {:className "filename"} (:id file))
+      (apply d/div {:className "cursors"}
+        (map #(Cursor %) cursors)))))
 
 (defn- filter-cursors-by-file [cs f]
   (filter #(= (:file %) (:id f)) cs))
@@ -90,6 +93,3 @@
 
 (defn request-render [app]
   (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))
-
-(defn homepage [app]
-  (q/render (Home) (:dom-element app)))
