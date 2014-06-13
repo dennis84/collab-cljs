@@ -45,8 +45,7 @@
   {id {:x (:x c)
        :y (:y c)
        :file (:file c)
-       :member (:name member)
-       :follow true}})
+       :member (:name member)}})
 
 (defn cursor [state [data sender]]
   (update-in state [:cursors] (fn [cs]

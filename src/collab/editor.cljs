@@ -7,6 +7,9 @@
             [collab.util :as util])
   (:require-macros [cljs.core.async.macros :as am]))
 
+(defn- class-name [classes]
+  (apply str (interpose " " (map identity classes))))
+
 (q/defcomponent Member [member]
   (d/li {:className "list-group-item"} (:name member)
     (when (true? (:me member))
@@ -47,14 +50,9 @@
             :style {:top (get-cursor-top c) :left (get-cursor-left c)}
             } (:member c))))
 
-(defn is-cursor-in-file [cs f]
-  (-> (filter #(= (:file %) (:id f)) cs)
-      (count)
-      (> 0)))
-
 (q/defcomponent Pane [[file cursors]]
-  (let [hidden? (is-cursor-in-file cursors file)]
-    (d/div {:className "pane" :style {:display (if hidden? "block" "none")}}
+  (let [hidden? (-> cursors (count) (< 1))]
+    (d/div {:className (class-name #{"pane" (when hidden? "hidden")})}
       (d/pre {:className "content"} (hl/hightlight file))
       (d/div {:className "filename"} (:id file))
       (apply d/div {:className "cursors"}
