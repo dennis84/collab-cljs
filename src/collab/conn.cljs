@@ -22,8 +22,11 @@
 (defn on-close [channels]
   (go (>! (:close channels) [])))
 
-(defn init-websocket-receiver [app room]
-  (let [ws (new js/WebSocket (s/join ["ws://localhost:9000/" room]))]
+(defn init-websocket-receiver [app]
+  (let [ws (:connection app)]
     (set! (.-onopen ws) (fn [] (on-open (:channels app) ws)))
     (set! (.-onclose ws) (fn [] (on-close (:channels app))))
     (set! (.-onmessage ws) (fn [m] (on-message (:channels app) m)))))
+
+(defn make [room]
+  (new js/WebSocket (s/join ["ws://localhost:9000/" room])))

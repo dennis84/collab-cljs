@@ -21,6 +21,23 @@
   (d/li {:className "list-group-item"}
     (d/a {:href ""} (:id file))))
 
+(q/defcomponent ChangeNick [conn]
+  (d/div {:id "change-nick" :className "modal fade bs-modal-sm"}
+    (d/div {:className "modal-dialog modal-sm"}
+      (d/div {:className "modal-content"}
+        (d/form {:onSubmit (fn [e] 
+                             (.preventDefault e)
+                             (let [input (.getElementById js/document "nickname")
+                                   value (.-value input)]
+                                (.send conn (util/clj->json {:t "update-nick" :d value}))))}
+          (d/div {:className "modal-body"}
+            (d/label {} "Nickname")
+            (d/input {:id "nickname" :className "form-control input-lg"}))
+          (d/div {:className "modal-footer"}
+            (d/button {:className "btn btn-default" :data-dismiss "modal"} "Close")
+            (d/button {:className "btn btn-primary" :type "submit"} "Apply"))
+          )))))
+
 (q/defcomponent Navigation [state channels]
   (d/div {:className "navigation"}
     (d/ul {:className "list-group"}
@@ -30,7 +47,8 @@
         (d/span {:className "label label-primary pull-right"}
           (count (:members state))))
       (d/li {:className "list-group-item"}
-        (d/a {:href ""} "Change Nickname")))
+        (d/a {:data-toggle "modal"
+              :data-target "#change-nick"} "Change Nickname")))
     (d/h3 {} "Who's Online")
     (apply d/ul {:className "list-group"}
       (map #(Member %) (vals (:members state))))
@@ -79,7 +97,7 @@
                :onClick #(.reload js/location)
                } "refresh")))
 
-(q/defcomponent Editor [state channels]
+(q/defcomponent Editor [state channels conn]
   (d/div {:className "layout"}
     (Navigation state channels)
     (d/div {:className "editor-wrapper"}
@@ -87,7 +105,8 @@
         (StatusOpened))
       (when (= (:status state) "closed")
         (StatusClosed))
-      (Panes state channels))))
+      (Panes state channels))
+    (ChangeNick conn)))
 
 (defn request-render [app]
-  (q/render (Editor @(:state app) (:channels app)) (:dom-element app)))
+  (q/render (Editor @(:state app) (:channels app) (:connection app)) (:dom-element app)))

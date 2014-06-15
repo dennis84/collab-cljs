@@ -8,9 +8,11 @@
             [collab.editor :as editor])
   (:require-macros [cljs.core.async.macros :as am]))
 
-(defn load-app [elem]
+(defn load-app [elem room]
   {:dom-element elem
+   :room room
    :state (atom (data/make))
+   :connection (conn/make room)
    :render-pending? (atom false)
    :channels {:join (a/chan)
               :leave (a/chan)
@@ -27,7 +29,7 @@
                :code ctrl/code
                :cursor ctrl/cursor
                :close ctrl/close
-               :open ctrl/open }})
+               :open ctrl/open}})
 
 (defn init-updates [app]
   (doseq [[ch update-fn] (:consumers app)]
@@ -36,17 +38,11 @@
             new-state (swap! (:state app) update-fn val)]
               (editor/request-render app))))))
 
-(defn render-homepage [app]
-  (home/request-render app))
-
-(defn render-editor [app room]
-  (init-updates app)
-  (conn/init-websocket-receiver app room)
-  (editor/request-render app))
-
 (defn ^:export main [elem]
-  (let [app (load-app elem)
-        room (subs (.-hash js/location) 1)]
+  (let [room (subs (.-hash js/location) 1)]
     (if (s/blank? room)
-      (render-homepage app)
-      (render-editor app room))))
+      (home/request-render elem)
+      (let [app (load-app elem room)]
+        (init-updates app)
+        (conn/init-websocket-receiver app)
+        (editor/request-render app)))))

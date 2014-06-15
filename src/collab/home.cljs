@@ -41,5 +41,5 @@
                        :frameBorder 0
                        :allowFullScreen true})))))))
 
-(defn request-render [app]
-  (q/render (Home) (:dom-element app)))
+(defn request-render [elem]
+  (q/render (Home) elem))
