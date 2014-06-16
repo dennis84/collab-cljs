@@ -10,6 +10,5 @@
       :source-paths ["src"]
       :compiler {
         :output-to "dist/js/collab.js"
-        :optimizations :advanced
         :preamble ["react/react.min.js"]
         :externs ["react/externs/react.js"]}}]})
