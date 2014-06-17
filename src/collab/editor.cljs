@@ -73,7 +73,7 @@
 (q/defcomponent Pane [[file cursors]]
   (let [hidden? (-> cursors (count) (< 1))]
     (d/div {:className (class-name #{"pane" (when hidden? "hidden")})}
-      (d/pre {:className "content"} (hl/hightlight file))
+      (d/pre {:className "content"} (hl/highlight file))
       (d/div {:className "filename"} (:id file))
       (apply d/div {:className "cursors"}
         (map #(Cursor %) cursors)))))
@@ -111,4 +111,6 @@
     (ChangeNick conn)))
 
 (defn request-render [app]
-  (q/render (Editor @(:state app) (:channels app) (:connection app)) (:dom-element app)))
+  (q/render
+    (Editor @(:state app) (:channels app) (:connection app))
+    (:dom-element app)))
