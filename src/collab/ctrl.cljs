@@ -30,28 +30,45 @@
     (change-nick data)
     (change-nick-in-cursor data)))
 
-;;;; Code
-
-(defn make-file [f]
-  {(:file f) {:id (:file f) :buffer (:buffer f) :lang (:lang f)}})
-
-(defn code [state [data sender]]
-  (update-in state [:files] (fn [fs]
-    (merge fs (make-file data)))))
-
 ;;;; Cursor
 
-(defn make-cursor [id c member]
+(defn- make-cursor [id c member]
   {id {:x (:x c)
        :y (:y c)
        :file (:file c)
        :member (:name member)}})
 
-(defn cursor [state [data sender]]
+(defn- update-cursor [state data sender]
   (update-in state [:cursors] (fn [cs]
     (let [members (:members state)
           member (get members sender)]
       (merge cs (make-cursor sender data member))))))
+
+(defn- update-values [m f & args]
+  (reduce (fn [r [k v]] (assoc r k (apply f v args))) {} m))
+
+(defn- follow-file [state id]
+  (-> state
+    (update-in [:files] update-values assoc :active false)
+    (assoc-in [:files id :active] true)))
+
+(defn cursor [state [data sender]]
+  (-> state
+    (update-cursor data sender)
+    (follow-file (:file data))))
+
+;;;; Code
+
+(defn- make-file [f]
+  {(:file f) {:id (:file f)
+              :buffer (:buffer f)
+              :lang (:lang f)
+              :active false}})
+
+(defn code [state [data sender]]
+  (-> state
+    (update-in [:files] (fn [fs] (merge fs (make-file data))))
+    (follow-file (:file data))))
 
 ;;;; Status
 
@@ -60,3 +77,8 @@
 
 (defn close [state]
   (assoc-in state [:status] "closed"))
+
+;;;; Misc
+
+(defn show-file [state file]
+  (follow-file state (:id file)))

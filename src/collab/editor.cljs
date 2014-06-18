@@ -17,9 +17,10 @@
     (when (true? (:coding member))
       (d/span {:className "glyphicon glyphicon-pencil pull-right"}))))
 
-(q/defcomponent File [file]
+(q/defcomponent File [file channels]
   (d/li {:className "list-group-item"}
-    (d/a {:href ""} (:id file))))
+    (d/a {:onClick #(am/go (a/>! (:show-file channels) file))
+          } (:id file))))
 
 (q/defcomponent ChangeNick [conn]
   (d/div {:id "change-nick" :className "modal fade bs-modal-sm"}
@@ -56,7 +57,7 @@
       (map #(Member %) (vals (:members state))))
     (d/h3 {} "Files")
     (apply d/ul {:className "list-group"}
-      (map #(File %) (vals (:files state))))))
+      (map #(File % channels) (vals (:files state))))))
 
 (defn- get-cursor-top [c]
   (str (-> (:y c) (- 1) (* 23)) "px"))
@@ -71,7 +72,7 @@
             } (:member c))))
 
 (q/defcomponent Pane [[file cursors]]
-  (let [hidden? (-> cursors (count) (< 1))]
+  (let [hidden? (false? (:active file))]
     (d/div {:className (class-name #{"pane" (when hidden? "hidden")})}
       (d/pre {:className "content"} (hl/highlight file))
       (d/div {:className "filename"} (:id file))
