@@ -19,27 +19,30 @@
 
 (q/defcomponent File [file channels]
   (d/li {:className "list-group-item"}
-    (d/a {:onClick #(am/go (a/>! (:show-file channels) file))
+    (d/a {:href "#" :onClick #(am/go (a/>! (:show-file channels) file))
           } (:id file))))
 
 (q/defcomponent ChangeNick [conn]
-  (d/div {:id "change-nick" :className "modal fade bs-modal-sm"}
-    (d/div {:className "modal-dialog modal-sm"}
-      (d/div {:className "modal-content"}
-        (d/form {:onSubmit (fn [e]
-                             (.preventDefault e)
-                             (let [input (.getElementById js/document "nickname")
-                                   value (.-value input)]
-                                (when (not (s/blank? value))
-                                  (.send conn (util/clj->json {:t "update-nick" :d value})))
-                                (.modal (js/$ "#change-nick") "hide")))}
-          (d/div {:className "modal-body"}
-            (d/label {} "Nickname")
-            (d/input {:id "nickname" :className "form-control input-lg"}))
-          (d/div {:className "modal-footer"}
-            (d/button {:className "btn btn-default" :data-dismiss "modal"} "Close")
-            (d/button {:className "btn btn-primary" :type "submit"} "Apply"))
-          )))))
+  (q/on-mount
+    (d/div {:id "change-nick" :className "modal fade bs-modal-sm"}
+      (d/div {:className "modal-dialog modal-sm"}
+        (d/div {:className "modal-content"}
+          (d/form {:onSubmit (fn [e]
+                               (.preventDefault e)
+                               (let [input (.getElementById js/document "nickname")
+                                     value (.-value input)]
+                                  (when (not (s/blank? value))
+                                    (.send conn (util/clj->json {:t "update-nick" :d value})))
+                                  (.modal (js/$ "#change-nick") "hide")))}
+            (d/div {:className "modal-body"}
+              (d/label {} "Nickname")
+              (d/input {:id "nickname" :className "form-control input-lg"}))
+            (d/div {:className "modal-footer"}
+              (d/button {:className "btn btn-default" :data-dismiss "modal"} "Close")
+              (d/button {:className "btn btn-primary" :type "submit"} "Apply"))
+            ))))
+    (fn [node] (let [$elem (js/$ node)]
+      (.on $elem "shown.bs.modal" #(.focus (.querySelector node "input")))))))
 
 (q/defcomponent Navigation [state channels]
   (d/div {:className "navigation"}
@@ -50,7 +53,8 @@
         (d/span {:className "label label-primary pull-right"}
           (count (:members state))))
       (d/li {:className "list-group-item"}
-        (d/a {:data-toggle "modal"
+        (d/a {:href "#"
+              :data-toggle "modal"
               :data-target "#change-nick"} "Change Nickname")))
     (d/h3 {} "Who's Online")
     (apply d/ul {:className "list-group"}
