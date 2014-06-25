@@ -47,10 +47,12 @@
 (defn- update-values [m f & args]
   (reduce (fn [r [k v]] (assoc r k (apply f v args))) {} m))
 
-(defn- follow-file [state id]
-  (-> state
-    (update-in [:files] update-values assoc :active false)
-    (assoc-in [:files id :active] true)))
+(defn- follow-file [state id force?]
+  (if (or (true? (:follow state)) (true? force?))
+    (-> state
+      (update-in [:files] update-values assoc :active false)
+      (assoc-in [:files id :active] true))
+    state))
 
 (defn cursor [state [data sender]]
   (-> state
@@ -81,4 +83,7 @@
 ;;;; Misc
 
 (defn show-file [state file]
-  (follow-file state (:id file)))
+  (follow-file state (:id file) true))
+
+(defn toggle-follow [state checked]
+  (assoc-in state [:follow] checked))

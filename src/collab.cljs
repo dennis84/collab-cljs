@@ -22,7 +22,8 @@
               :cursor (a/chan)
               :close (a/chan)
               :open (a/chan)
-              :show-file (a/chan)}
+              :show-file (a/chan)
+              :toggle-follow (a/chan)}
    :consumers {:join ctrl/join
                :leave ctrl/leave
                :members ctrl/members
@@ -31,7 +32,8 @@
                :cursor ctrl/cursor
                :close ctrl/close
                :open ctrl/open
-               :show-file ctrl/show-file}})
+               :show-file ctrl/show-file
+               :toggle-follow ctrl/toggle-follow}})
 
 (defn init-updates [app]
   (doseq [[ch update-fn] (:consumers app)]

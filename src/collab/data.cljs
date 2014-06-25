@@ -4,4 +4,5 @@
   {:members nil
    :files nil
    :cursors nil
-   :status nil})
+   :status nil
+   :follow true})

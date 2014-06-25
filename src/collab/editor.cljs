@@ -48,7 +48,12 @@
   (d/div {:className "navigation"}
     (d/ul {:className "list-group"}
       (d/li {:className "list-group-item"} "Follow"
-        (d/input {:type "checkbox" :className "pull-right"}))
+        (d/input {:type "checkbox"
+                  :className "pull-right"
+                  :checked (:follow state)
+                  :onClick (fn [e] (let [value (.-checked (.-target e))]
+                             (am/go (a/>! (:toggle-follow channels) value))))
+                  }))
       (d/li {:className "list-group-item"} "Online"
         (d/span {:className "label label-primary pull-right"}
           (count (:members state))))
