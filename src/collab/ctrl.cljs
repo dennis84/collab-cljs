@@ -47,8 +47,8 @@
 (defn- update-values [m f & args]
   (reduce (fn [r [k v]] (assoc r k (apply f v args))) {} m))
 
-(defn- follow-file [state id force?]
-  (if (or (true? (:follow state)) (true? force?))
+(defn- follow-file [state id & {:keys [f] :or {f false}}]
+  (if (or (true? (:follow state)) (true? f))
     (-> state
       (update-in [:files] update-values assoc :active false)
       (assoc-in [:files id :active] true))
