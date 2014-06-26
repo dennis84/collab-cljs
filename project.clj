@@ -3,7 +3,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2227"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
-                 [quiescent/quiescent "0.1.3"]
+                 [quiescent/quiescent "0.1.4"]
                  [com.facebook/react "0.10.0"]]
   :cljsbuild {
     :builds [{
