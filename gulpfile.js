@@ -41,7 +41,7 @@ gulp.task('watch', function() {
     'resources/index.html',
     'resources/less/*',
     'dist/js/collab.js',
-    'dist/js/collab.css'
+    'dist/css/collab.css'
   ], ['stylesheets', 'dist'])
 })
 

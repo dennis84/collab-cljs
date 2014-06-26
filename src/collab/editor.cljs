@@ -114,16 +114,18 @@
       (map #(Pane [% (filter-cursors-by-file cs %)]) fs))))
 
 (q/defcomponent StatusOpened []
-  (d/div {:className "center"}
-    (d/img {:src "images/loading-bubbles.svg" :height 64 :width 64})
-    (d/h3 {} "Waiting for code")))
+  (d/div {:className "center-me"}
+    (d/div {}
+      (d/img {:src "images/loading-bubbles.svg" :height 64 :width 64})
+      (d/h3 {} "Waiting for code"))))
 
 (q/defcomponent StatusClosed []
-  (d/div {:className "center"}
-    (d/h3 {} "Connection lost")
-    (d/button {:className "btn btn-primary"
-               :onClick #(.reload js/location)
-               } "refresh")))
+  (d/div {:className "center-me"}
+    (d/div {}
+      (d/h3 {} "Connection lost")
+      (d/button {:className "btn btn-primary"
+                 :onClick #(.reload js/location)
+                 } "refresh"))))
 
 (q/defcomponent Editor [state channels conn]
   (d/div {:className "layout"}
