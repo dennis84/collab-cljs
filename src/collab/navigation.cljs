@@ -13,7 +13,7 @@
 
 (q/defcomponent File [file channels]
   (d/li {:className "list-group-item"}
-    (d/a {:href "#" :onClick #(am/go (a/>! (:show-file channels) file))
+    (d/a {:onClick #(am/go (a/>! (:show-file channels) file))
           } (:id file))))
 
 (q/defcomponent Navigation [state channels]
@@ -30,8 +30,7 @@
         (d/span {:className "label label-primary pull-right"}
           (count (:members state))))
       (d/li {:className "list-group-item"}
-        (d/a {:href "#"
-              :data-toggle "modal"
+        (d/a {:data-toggle "modal"
               :data-target "#change-nick"} "Change Nickname")))
     (d/h3 {} "Who's Online")
     (apply d/ul {:className "list-group"}
