@@ -20,7 +20,7 @@
               (d/label {} "Nickname")
               (d/input {:id "nickname" :className "form-control input-lg"}))
             (d/div {:className "modal-footer"}
-              (d/button {:className "btn btn-default" :data-dismiss "modal"} "Close")
+              (d/button {:className "btn btn-default" :type "button" :data-dismiss "modal"} "Close")
               (d/button {:className "btn btn-primary" :type "submit"} "Apply"))
             ))))
     (fn [node] (let [$elem (js/$ node)]
